@@ -14,31 +14,45 @@ void initInfo(ConnInfo *info) {
   info->user = "root";
   info->password = "1234";
   info->database = "db_aiadoc";
+
+//   fprintf(stdout, "%s\n", info->server);
+//   fprintf(stdout, "%s\n", info->user);
+//   fprintf(stdout, "%s\n", info->password);
+//   fprintf(stdout, "%s\n", info->database);
 }
 
-void createConnection(ConnInfo* info) {
+void createConnection(ConnInfo *info) {
   MYSQL *conn = mysql_init(NULL);
-  if(!mysql_real_connect(info->conn,  info->server,  info->user,  info->password,  info->database,  0,  NULL,  0 )) {
-    fprintf(stderr, "%s\n", mysql_error(conn));
+  int ok = mysql_real_connect(conn, info->server, info->user, info->password, info->database, 0, NULL, 0);
+  if(!ok) {
+    fprintf(stderr, "%s", mysql_error(conn));
   }
   info->conn = conn;
 }
 
-main() {
+int main() {
+
   ConnInfo info;
-  MYSQL_RES *res;
+  MYSQL_RES *result;
   MYSQL_ROW *row;
+  MYSQL_FIELD *field;
 
   initInfo(&info);
   createConnection(&info);
 
   mysql_query(info.conn, "select * from user_table");
-  res = mysql_use_result(info.conn);
+  result = mysql_use_result(info.conn);
 
-  while((row = mysql_fetch_row(res))) {
-     printf(row[0]);
+  while((row = mysql_fetch_row(result)) != NULL) {
+
+    printf("\n");
+    printf("id|%s\n", row[0] ? row[0] : "NULL");
+    printf("name|%s\n", row[1] ? row[1] : "NULL");
+    printf("pass|%s\n", row[2] ? row[2] : "NULL");
   }
 
-  mysql_free_result(res);
-  mysql_close(info.conn);
+//   mysql_free_result(result);
+//   mysql_close(info.conn);
+
+  return 0;
 }

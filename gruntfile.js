@@ -5,12 +5,15 @@ module.exports = function(grunt) {
     watch: {
       c: {
         files: ["src/**/*.c"],
-        tasks: ["shell:compile"]
+        tasks: ["shell:compile", "shell:run"]
       }
     },
     shell: {
       compile: {
         command: "make"
+      },
+      run: {
+        command: "./bin/mysqlclient"
       }
     }
   });
